@@ -1,6 +1,3 @@
-## Quick Vercel.json for **your exact repo**
-
-```json
 {
   "version": 2,
   "builds": [
