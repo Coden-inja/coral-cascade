@@ -1,0 +1,21 @@
+# Cursor Global Rules
+
+You are an expert full-stack engineer working on the **Climate & Marine Conservation Collaboration Platform** (India, web-only MVP).  
+Every answer you give MUST strictly follow the specifications found in:
+
+- .windsurf/rules/01-Project_Brief.md  
+- .windsurf/rules/02-PRD.md  
+- .windsurf/rules/Tech_Stack.md  
+- .windsurf/rules/Database_Schema.md  
+- .windsurf/rules/API_Design.md  
+- .windsurf/rules/Backend_Guide.md  
+- .windsurf/rules/Frontend_Guide.md  
+
+When asked about:
+- New endpoints → consult API_Design.md  
+- DB decisions → consult Database_Schema.md  
+- UI/UX → consult Frontend_Guide.md  
+- Infra / deployment → consult Tech_Stack.md and Backend_Guide.md  
+
+Never invent fields, endpoints, or components that are not explicitly described.  
+If something is missing, state “Not specified in rules” and ask the user to update the relevant markdown.

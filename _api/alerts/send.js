@@ -1,0 +1,372 @@
+// Email Alerts System for Environmental Incidents
+// This endpoint sends instant alerts to nearby NGOs & communities
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try {
+    const { 
+      incidentType, 
+      location, 
+      coordinates, 
+      severity, 
+      description, 
+      sensorData,
+      timestamp 
+    } = req.body
+
+    // Validate required fields
+    if (!incidentType || !location || !severity) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: incidentType, location, severity' 
+      })
+    }
+
+    console.log('🚨 [Alerts] Processing environmental incident:', {
+      type: incidentType,
+      location,
+      severity,
+      timestamp: timestamp || new Date().toISOString()
+    })
+
+    // Fallback data for MVP (in production, this would be real API calls)
+    const fallbackNGOs = [
+      {
+        id: 1,
+        name: 'Marine Conservation India',
+        email: 'alerts@marineconservation.in',
+        phone: '+91-98765-43210',
+        location: 'Mumbai, Maharashtra',
+        coordinates: [19.0760, 72.8777],
+        specialties: ['marine', 'coral', 'pollution'],
+        radius: 100, // km
+        active: true
+      },
+      {
+        id: 2,
+        name: 'Forest Watch Foundation',
+        email: 'emergency@forestwatch.org',
+        phone: '+91-98765-43211',
+        location: 'Bangalore, Karnataka',
+        coordinates: [12.9716, 77.5946],
+        specialties: ['forest', 'wildlife', 'deforestation'],
+        radius: 150,
+        active: true
+      },
+      {
+        id: 3,
+        name: 'Coastal Protection Network',
+        email: 'alerts@coastalprotection.net',
+        phone: '+91-98765-43212',
+        location: 'Chennai, Tamil Nadu',
+        coordinates: [13.0827, 80.2707],
+        specialties: ['coastal', 'erosion', 'tsunami'],
+        radius: 80,
+        active: true
+      }
+    ]
+
+    const fallbackCommunities = [
+      {
+        id: 1,
+        name: 'Andaman Fishermen Association',
+        email: 'president@andamanfishermen.org',
+        phone: '+91-98765-43213',
+        location: 'Port Blair, Andaman Islands',
+        coordinates: [11.6234, 92.7265],
+        radius: 50,
+        active: true
+      },
+      {
+        id: 2,
+        name: 'Western Ghats Conservation Group',
+        email: 'contact@westernghats.org',
+        phone: '+91-98765-43214',
+        location: 'Coorg, Karnataka',
+        coordinates: [12.4200, 75.7400],
+        radius: 120,
+        active: true
+      }
+    ]
+
+    // Calculate distance between two coordinates (Haversine formula)
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371 // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180
+      const dLon = (lon2 - lon1) * Math.PI / 180
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2)
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+      return R * c
+    }
+
+    // Find nearby organizations and communities
+    const findNearbyRecipients = (targetCoords, organizations, maxRadius = 200) => {
+      return organizations.filter(org => {
+        if (!org.active || !org.coordinates) return false
+        
+        const distance = calculateDistance(
+          targetCoords[0], targetCoords[1],
+          org.coordinates[0], org.coordinates[1]
+        )
+        
+        return distance <= Math.min(org.radius, maxRadius)
+      }).sort((a, b) => {
+        const distA = calculateDistance(
+          targetCoords[0], targetCoords[1],
+          a.coordinates[0], a.coordinates[1]
+        )
+        const distB = calculateDistance(
+          targetCoords[0], targetCoords[1],
+          b.coordinates[0], b.coordinates[1]
+        )
+        return distA - distB
+      })
+    }
+
+    // Generate alert content based on incident type
+    const generateAlertContent = (incident) => {
+      const templates = {
+        'coral_bleaching': {
+          subject: '🚨 Coral Bleaching Alert - Immediate Action Required',
+          priority: 'high',
+          template: `
+URGENT: Coral Bleaching Incident Detected
+
+Location: ${incident.location}
+Coordinates: ${incident.coordinates?.join(', ')}
+Severity: ${incident.severity}
+Time: ${incident.timestamp || new Date().toLocaleString()}
+
+Description: ${incident.description || 'Coral bleaching detected by environmental sensors'}
+
+Immediate Actions Required:
+• Assess coral health in affected areas
+• Document bleaching extent and severity
+• Implement emergency response protocols
+• Notify marine biologists and researchers
+• Consider temporary protection measures
+
+Sensor Data: ${JSON.stringify(incident.sensorData || {}, null, 2)}
+
+This alert was automatically generated by HackMarine's environmental monitoring system.
+          `
+        },
+        'deforestation': {
+          subject: '🌳 Deforestation Alert - Illegal Activity Detected',
+          priority: 'high',
+          template: `
+URGENT: Deforestation Incident Detected
+
+Location: ${incident.location}
+Coordinates: ${incident.coordinates?.join(', ')}
+Severity: ${incident.severity}
+Time: ${incident.timestamp || new Date().toLocaleString()}
+
+Description: ${incident.description || 'Deforestation activity detected by satellite monitoring'}
+
+Immediate Actions Required:
+• Verify incident location and extent
+• Contact local forest department
+• Document evidence and take photographs
+• Alert wildlife protection teams
+• Coordinate with law enforcement if needed
+
+Sensor Data: ${JSON.stringify(incident.sensorData || {}, null, 2)}
+
+This alert was automatically generated by HackMarine's environmental monitoring system.
+          `
+        },
+        'water_pollution': {
+          subject: '💧 Water Pollution Alert - Contamination Detected',
+          priority: 'medium',
+          template: `
+ALERT: Water Pollution Incident Detected
+
+Location: ${incident.location}
+Coordinates: ${incident.coordinates?.join(', ')}
+Severity: ${incident.severity}
+Time: ${incident.timestamp || new Date().toLocaleString()}
+
+Description: ${incident.description || 'Water quality degradation detected by sensors'}
+
+Immediate Actions Required:
+• Test water quality parameters
+• Identify pollution source
+• Notify local authorities
+• Warn affected communities
+• Implement containment measures
+
+Sensor Data: ${JSON.stringify(incident.sensorData || {}, null, 2)}
+
+This alert was automatically generated by HackMarine's environmental monitoring system.
+          `
+        },
+        'air_pollution': {
+          subject: '🌫️ Air Quality Alert - Pollution Spike Detected',
+          priority: 'medium',
+          template: `
+ALERT: Air Quality Incident Detected
+
+Location: ${incident.location}
+Coordinates: ${incident.coordinates?.join(', ')}
+Severity: ${incident.severity}
+Time: ${incident.timestamp || new Date().toLocaleString()}
+
+Description: ${incident.description || 'Air quality deterioration detected by monitoring stations'}
+
+Immediate Actions Required:
+• Verify air quality readings
+• Identify pollution sources
+• Issue public health warnings
+• Coordinate with health authorities
+• Implement emergency protocols if needed
+
+Sensor Data: ${JSON.stringify(incident.sensorData || {}, null, 2)}
+
+This alert was automatically generated by HackMarine's environmental monitoring system.
+          `
+        }
+      }
+
+      return templates[incident.incidentType] || {
+        subject: '🚨 Environmental Alert - Action Required',
+        priority: 'medium',
+        template: `
+ENVIRONMENTAL ALERT
+
+Location: ${incident.location}
+Coordinates: ${incident.coordinates?.join(', ')}
+Severity: ${incident.severity}
+Time: ${incident.timestamp || new Date().toLocaleString()}
+
+Description: ${incident.description || 'Environmental incident detected'}
+
+Please assess the situation and take appropriate action.
+
+Sensor Data: ${JSON.stringify(incident.sensorData || {}, null, 2)}
+
+This alert was automatically generated by HackMarine's environmental monitoring system.
+        `
+      }
+    }
+
+    // Find nearby recipients
+    const nearbyNGOs = findNearbyRecipients(coordinates || [19.0760, 72.8777], fallbackNGOs)
+    const nearbyCommunities = findNearbyRecipients(coordinates || [19.0760, 72.8777], fallbackCommunities)
+    
+    const allRecipients = [...nearbyNGOs, ...nearbyCommunities]
+
+    // Generate alert content
+    const alertContent = generateAlertContent({
+      incidentType,
+      location,
+      coordinates,
+      severity,
+      description,
+      sensorData,
+      timestamp
+    })
+
+    // Simulate sending emails (in production, this would use a real email service)
+    const emailResults = await Promise.allSettled(
+      allRecipients.map(async (recipient) => {
+        console.log(`📧 [Alerts] Sending alert to ${recipient.name} (${recipient.email})`)
+        
+        // Simulate email sending delay
+        await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200))
+        
+        // Simulate success/failure
+        const success = Math.random() > 0.1 // 90% success rate
+        
+        if (success) {
+          console.log(`✅ [Alerts] Alert sent successfully to ${recipient.name}`)
+          return {
+            recipient: recipient.name,
+            email: recipient.email,
+            status: 'sent',
+            timestamp: new Date().toISOString()
+          }
+        } else {
+          console.log(`❌ [Alerts] Failed to send alert to ${recipient.name}`)
+          return {
+            recipient: recipient.name,
+            email: recipient.email,
+            status: 'failed',
+            error: 'Email service temporarily unavailable',
+            timestamp: new Date().toISOString()
+          }
+        }
+      })
+    )
+
+    // Process results
+    const successfulSends = emailResults.filter(result => 
+      result.status === 'fulfilled' && result.value.status === 'sent'
+    ).length
+
+    const failedSends = emailResults.filter(result => 
+      result.status === 'fulfilled' && result.value.status === 'failed'
+    ).length
+
+    const errors = emailResults.filter(result => result.status === 'rejected')
+
+    // Log incident for tracking
+    const incidentLog = {
+      id: Date.now().toString(),
+      incidentType,
+      location,
+      coordinates,
+      severity,
+      description,
+      sensorData,
+      timestamp: timestamp || new Date().toISOString(),
+      recipients: allRecipients.length,
+      successfulSends,
+      failedSends,
+      errors: errors.length,
+      status: 'processed'
+    }
+
+    console.log('📊 [Alerts] Alert processing completed:', {
+      totalRecipients: allRecipients.length,
+      successfulSends,
+      failedSends,
+      errors: errors.length
+    })
+
+    // Return response
+    return res.status(200).json({
+      success: true,
+      message: 'Environmental alert processed successfully',
+      incident: incidentLog,
+      recipients: {
+        total: allRecipients.length,
+        ngos: nearbyNGOs.length,
+        communities: nearbyCommunities.length
+      },
+      delivery: {
+        successful: successfulSends,
+        failed: failedSends,
+        errors: errors.length
+      },
+      alertContent: {
+        subject: alertContent.subject,
+        priority: alertContent.priority
+      },
+      timestamp: new Date().toISOString()
+    })
+
+  } catch (error) {
+    console.error('❌ [Alerts] Error processing environmental alert:', error)
+    
+    return res.status(500).json({
+      error: 'Failed to process environmental alert',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    })
+  }
+}
