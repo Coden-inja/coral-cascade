@@ -2,95 +2,230 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+/* HackMarine Design System - Marine Environmental Colors */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core HackMarine Color Palette */
+    --background: 213 24% 97%; /* off-white #F7F9FB */
+    --foreground: 200 69% 18%; /* deep-sea teal #0A3B4C */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Marine Themed Cards */
+    --card: 213 24% 97%;
+    --card-foreground: 200 69% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 213 24% 97%;
+    --popover-foreground: 200 69% 18%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Deep Sea Teal */
+    --primary: 200 69% 18%; /* #0A3B4C */
+    --primary-foreground: 213 24% 97%;
+    --primary-glow: 200 100% 25%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Coral Blaze */
+    --secondary: 7 100% 64%; /* #FF5F45 */
+    --secondary-foreground: 213 24% 97%;
+    --secondary-glow: 7 100% 70%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Accent - Algae Lime */
+    --accent: 89 74% 70%; /* #9FE870 */
+    --accent-foreground: 200 69% 18%;
+    --accent-glow: 89 74% 80%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 200 20% 90%;
+    --muted-foreground: 200 20% 40%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 213 24% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 200 20% 85%;
+    --input: 200 20% 90%;
+    --ring: 200 69% 18%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom HackMarine Variables */
+    --ocean-gradient: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --coral-gradient: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
+    --algae-gradient: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+    --depth-gradient: linear-gradient(180deg, hsl(var(--background)), hsl(var(--primary) / 0.1));
+    
+    /* Shadows */
+    --shadow-marine: 0 20px 40px -12px hsl(var(--primary) / 0.25);
+    --shadow-coral: 0 20px 40px -12px hsl(var(--secondary) / 0.25);
+    --shadow-algae: 0 20px 40px -12px hsl(var(--accent) / 0.25);
+    --shadow-depth: 0 25px 50px -12px hsl(200 69% 18% / 0.4);
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Animations */
+    --wave-duration: 6s;
+    --float-duration: 3s;
+    --pulse-duration: 2s;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 200 69% 8%;
+    --foreground: 213 24% 97%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 200 50% 12%;
+    --card-foreground: 213 24% 97%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 200 50% 12%;
+    --popover-foreground: 213 24% 97%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 213 24% 97%;
+    --primary-foreground: 200 69% 18%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 7 100% 64%;
+    --secondary-foreground: 213 24% 97%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 89 74% 70%;
+    --accent-foreground: 200 69% 18%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 200 30% 20%;
+    --muted-foreground: 200 20% 60%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --border: 200 30% 20%;
+    --input: 200 30% 20%;
+    --ring: 213 24% 97%;
+    
+    --depth-gradient: linear-gradient(180deg, hsl(var(--background)), hsl(var(--primary) / 0.2));
+  }
+}
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .marine-gradient {
+    background: var(--ocean-gradient);
+  }
+  
+  .coral-gradient {
+    background: var(--coral-gradient);
+  }
+  
+  .algae-gradient {
+    background: var(--algae-gradient);
+  }
+  
+  .depth-gradient {
+    background: var(--depth-gradient);
+  }
+  
+  .shadow-marine {
+    box-shadow: var(--shadow-marine);
+  }
+  
+  .shadow-coral {
+    box-shadow: var(--shadow-coral);
+  }
+  
+  .shadow-algae {
+    box-shadow: var(--shadow-algae);
+  }
+  
+  .shadow-depth {
+    box-shadow: var(--shadow-depth);
+  }
+
+  .wave-animation {
+    animation: wave var(--wave-duration) ease-in-out infinite;
+  }
+  
+  .float-animation {
+    animation: float var(--float-duration) ease-in-out infinite;
+  }
+  
+  .pulse-marine {
+    animation: pulse-marine var(--pulse-duration) ease-in-out infinite;
+  }
+
+  .glass-marine {
+    @apply bg-primary/10 backdrop-blur-md border border-primary/20;
+  }
+  
+  .glass-coral {
+    @apply bg-secondary/10 backdrop-blur-md border border-secondary/20;
+  }
+  
+  .glass-algae {
+    @apply bg-accent/10 backdrop-blur-md border border-accent/20;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .parallax-layer {
+    will-change: transform;
+  }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+  50% { transform: translateY(-10px) rotateZ(1deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes pulse-marine {
+  0%, 100% { 
+    opacity: 1;
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% { 
+    opacity: 0.8;
+    box-shadow: 0 0 0 20px hsl(var(--primary) / 0);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes slide-up {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from { 
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
