@@ -102,14 +102,21 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<"div"> & {
-      hideLabel?: boolean
-      hideIndicator?: boolean
-      indicator?: "line" | "dot" | "dashed"
-      nameKey?: string
-      labelKey?: string
-    }
+  {
+    active?: boolean
+    payload?: any[]
+    className?: string
+    indicator?: "line" | "dot" | "dashed"
+    hideLabel?: boolean
+    hideIndicator?: boolean
+    label?: any
+    labelFormatter?: (value: any, payload: any[]) => React.ReactNode
+    labelClassName?: string
+    formatter?: (value: any, name: any, item: any, index: number, payload: any) => React.ReactNode
+    color?: string
+    nameKey?: string
+    labelKey?: string
+  }
 >(
   (
     {
@@ -126,6 +133,7 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
+      ...props
     },
     ref
   ) => {
@@ -258,10 +266,11 @@ const ChartLegend = RechartsPrimitive.Legend
 
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  React.ComponentProps<"div"> & {
       hideIcon?: boolean
       nameKey?: string
+      payload?: any[]
+      verticalAlign?: "top" | "bottom"
     }
 >(
   (
