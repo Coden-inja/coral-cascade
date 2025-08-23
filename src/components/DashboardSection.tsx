@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Box } from '@react-three/drei';
+import Earth3D from './Earth3D';
+import EarthModal from './EarthModal';
+import ForestGoogleMap from './ForestGoogleMap';
+import ForestMapModal from './ForestMapModal';
+import WeatherWidget from './WeatherWidget';
 import {
   LineChart,
   Line,
@@ -51,98 +56,121 @@ const RotatingCube = () => (
   </mesh>
 );
 
-const ForestHeatMap = () => (
-  <Card className="group hover:shadow-algae transition-all duration-500 transform hover:-translate-y-2">
-    <CardHeader className="pb-3">
-      <div className="flex items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <TreePine className="w-5 h-5 text-accent" />
-          Forest Heat-Map
-        </CardTitle>
-        <Badge variant="outline" className="algae-gradient text-white">
-          Live
-        </Badge>
-      </div>
-      <CardDescription>Real-time deforestation vs reforestation tracking</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <div className="h-48 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={forestData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-            <YAxis stroke="hsl(var(--muted-foreground))" />
-            <Tooltip 
-              contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px',
-                fontSize: '12px'
-              }}
-            />
-            <Area 
-              type="monotone" 
-              dataKey="reforestation" 
-              stroke="hsl(var(--accent))" 
-              fill="hsl(var(--accent))"
-              fillOpacity={0.6}
-            />
-            <Area 
-              type="monotone" 
-              dataKey="deforestation" 
-              stroke="hsl(var(--destructive))" 
-              fill="hsl(var(--destructive))"
-              fillOpacity={0.4}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="flex justify-between mt-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-accent rounded-full"></div>
-          <span>Reforestation</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-destructive rounded-full"></div>
-          <span>Deforestation</span>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+const ForestHeatMap = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const Coral3D = () => (
-  <Card className="group hover:shadow-coral transition-all duration-500 transform hover:-translate-y-2">
-    <CardHeader className="pb-3">
-      <div className="flex items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <Waves className="w-5 h-5 text-secondary" />
-          Coral 3D Model
-        </CardTitle>
-        <Badge variant="outline" className="coral-gradient text-white">
-          Interactive
-        </Badge>
-      </div>
-      <CardDescription>3D visualization of coral reef health</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg overflow-hidden">
-        <Canvas camera={{ position: [3, 3, 3] }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <RotatingCube />
-          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={2} />
-        </Canvas>
-      </div>
-      <div className="mt-4 flex justify-between items-center">
-        <div className="text-sm text-muted-foreground">Health Score: 78%</div>
-        <Button size="sm" variant="outline" className="coral-gradient text-white">
-          View Detail
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
-);
+  return (
+    <>
+      <Card className="group hover:shadow-algae transition-all duration-500 transform hover:-translate-y-2">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <TreePine className="w-5 h-5 text-accent" />
+              Forest Heat-Map
+            </CardTitle>
+            <Badge variant="outline" className="algae-gradient text-white">
+              Live
+            </Badge>
+          </div>
+          <CardDescription>Real-time deforestation vs reforestation tracking</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-48 w-full bg-gradient-to-br from-green-900/20 to-red-900/20 rounded-lg overflow-hidden">
+            <ForestGoogleMap />
+          </div>
+          <div className="mt-4 flex justify-between items-center">
+            <div className="flex gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span>Reforestation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span>Deforestation</span>
+              </div>
+            </div>
+            <button 
+              className="px-3 py-1 text-sm bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md border border-green-500 hover:from-green-700 hover:to-green-800 transition-all duration-200"
+              onClick={() => setIsModalOpen(true)}
+              type="button"
+            >
+              View Full Map
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <ForestMapModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+    </>
+  );
+};
+
+const Earth3DVisualization = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleExploreClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Explore Earth button clicked!');
+    setIsModalOpen(true);
+    console.log('Modal state set to true');
+  };
+
+  console.log('Earth3DVisualization render - isModalOpen:', isModalOpen);
+
+  return (
+    <>
+      <Card className="group hover:shadow-coral transition-all duration-500 transform hover:-translate-y-2">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-secondary" />
+              3D Earth Model
+            </CardTitle>
+            <Badge variant="outline" className="coral-gradient text-white">
+              Interactive
+            </Badge>
+          </div>
+          <CardDescription>Interactive 3D visualization of our planet</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg overflow-hidden">
+            <Canvas camera={{ position: [0, 0, 5] }}>
+              <Earth3D />
+              <OrbitControls 
+                enableZoom={true} 
+                autoRotate={false}
+                minDistance={3}
+                maxDistance={10}
+              />
+            </Canvas>
+          </div>
+          <div className="mt-4 flex justify-between items-center">
+            <div className="text-sm text-muted-foreground">Global Environmental Data</div>
+            <button 
+              className="px-3 py-1 text-sm bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-md border border-orange-400 hover:from-orange-600 hover:to-red-600 transition-all duration-200"
+              onClick={handleExploreClick}
+              type="button"
+            >
+              Explore Earth
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <EarthModal 
+        isOpen={isModalOpen} 
+        onClose={() => {
+          console.log('Closing modal');
+          setIsModalOpen(false);
+        }} 
+      />
+    </>
+  );
+};
 
 const OzoneGraph = () => (
   <Card className="group hover:shadow-marine transition-all duration-500 transform hover:-translate-y-2">
@@ -286,7 +314,7 @@ const DashboardSection = () => {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -304,7 +332,17 @@ const DashboardSection = () => {
           viewport={{ once: true }}
           className="transform hover:scale-[1.02] transition-all duration-300"
         >
-          <Coral3D />
+          <Earth3DVisualization />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          viewport={{ once: true }}
+          className="transform hover:scale-[1.02] transition-all duration-300"
+        >
+          <WeatherWidget />
         </motion.div>
         
         <motion.div

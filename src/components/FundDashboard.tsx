@@ -76,20 +76,22 @@ const ProjectCard = ({ project, index }) => {
               <CardTitle className="text-lg group-hover:text-secondary transition-colors">
                 {project.title}
               </CardTitle>
-              <CardDescription className="flex items-center gap-2 mt-1">
-                {project.category}
-                {project.approval === 'verified' && (
-                  <Badge className="algae-gradient text-white">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Verified
-                  </Badge>
-                )}
-                {project.approval === 'pending' && (
-                  <Badge variant="outline">
-                    <Clock className="w-3 h-3 mr-1" />
-                    Pending
-                  </Badge>
-                )}
+              <CardDescription className="mt-1">
+                <span>{project.category}</span>
+                <div className="flex items-center gap-2 mt-1">
+                  {project.approval === 'verified' && (
+                    <Badge className="algae-gradient text-white">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Verified
+                    </Badge>
+                  )}
+                  {project.approval === 'pending' && (
+                    <Badge variant="outline">
+                      <Clock className="w-3 h-3 mr-1" />
+                      Pending
+                    </Badge>
+                  )}
+                </div>
               </CardDescription>
             </div>
             <Badge 

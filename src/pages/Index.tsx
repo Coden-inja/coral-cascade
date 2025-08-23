@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Users, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HeroSection from '@/components/HeroSection';
+import BuoyVideoSection from '@/components/BuoyVideoSection';
 import LiveStatsBar from '@/components/LiveStatsBar';
 import DashboardSection from '@/components/DashboardSection';
 import FundDashboard from '@/components/FundDashboard';
@@ -16,20 +17,20 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-depth overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/20 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold marine-gradient bg-clip-text text-transparent">
               HackMarine
             </h1>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/" className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
+                <a href="/" className="flex items-center gap-2">
                   <Home className="w-4 h-4" />
                   Home
-                </Link>
+                </a>
               </Button>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
                 <Link to="/social" className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   Social
@@ -44,6 +45,9 @@ const Index = () => {
       <div className="pt-16">
         {/* Hero Section */}
         <HeroSection />
+        
+        {/* Buoy Video Section */}
+        <BuoyVideoSection />
         
         {/* Live Stats Bar */}
         <LiveStatsBar />
