@@ -79,7 +79,8 @@ const VoiceAgent = () => {
         // Extract specific error information
         let errorMessage = "Connection error";
         if (error.error && error.error.type === 'cors') {
-          errorMessage = "CORS error - API call blocked by browser. Check domain configuration.";
+          const origin = window.location.origin;
+          errorMessage = `CORS error - API call blocked by browser. Add Allowed Origin in Vapi dashboard: ${origin}`;
         } else if (error.error && error.error.status === 400) {
           errorMessage = "Invalid request format or missing parameters";
         } else if (error.error && error.error.status === 401) {
@@ -402,6 +403,29 @@ const VoiceAgent = () => {
                 <p className="text-muted-foreground">
                   {callStatus}
                 </p>
+
+                {/* CORS guidance */}
+                {hasError && callStatus.toLowerCase().includes('cors') && (
+                  <div className="mt-2 text-xs p-3 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 dark:bg-amber-900/20 dark:text-amber-200">
+                    <div className="font-medium mb-1">Allow this origin in Vapi dashboard</div>
+                    <div className="flex items-center gap-2">
+                      <code className="px-2 py-1 rounded bg-amber-100/60 dark:bg-amber-800/40">
+                        {window.location.origin}
+                      </code>
+                      <button
+                        className="px-2 py-1 rounded bg-amber-200/70 hover:bg-amber-300/70 dark:bg-amber-700/40 dark:hover:bg-amber-700/60 transition-colors"
+                        onClick={() => navigator.clipboard.writeText(window.location.origin)}
+                        type="button"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <div className="mt-2 opacity-80">
+                      Add it under Project → Settings → Allowed Origins. Also include
+                      localhost variants like http://localhost:5173 and http://127.0.0.1:5173.
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Call control buttons */}

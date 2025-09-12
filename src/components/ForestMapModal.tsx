@@ -1,7 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ForestGoogleMap from './ForestGoogleMap';
+import ForestHeatmap from '@/components/ui/forest-heatmap';
 
 interface ForestMapModalProps {
   isOpen: boolean;
@@ -32,9 +32,9 @@ const ForestMapModal: React.FC<ForestMapModalProps> = ({ isOpen, onClose }) => {
           </p>
         </div>
         
-        {/* Google Maps Container */}
+        {/* Leaflet Heatmap Container */}
         <div className="w-full h-full">
-          <ForestGoogleMap />
+          <ForestHeatmap />
         </div>
       </div>
     </div>

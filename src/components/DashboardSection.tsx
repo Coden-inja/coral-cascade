@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Box } from '@react-three/drei';
 import Earth3D from './Earth3D';
 import EarthModal from './EarthModal';
-import ForestGoogleMap from './ForestGoogleMap';
+import ForestHeatmap from '@/components/ui/forest-heatmap';
 import ForestMapModal from './ForestMapModal';
 import WeatherWidget from './WeatherWidget';
 import {
@@ -76,7 +76,7 @@ const ForestHeatMap = () => {
         </CardHeader>
         <CardContent>
           <div className="h-48 w-full bg-gradient-to-br from-green-900/20 to-red-900/20 rounded-lg overflow-hidden">
-            <ForestGoogleMap />
+            <ForestHeatmap />
           </div>
           <div className="mt-4 flex justify-between items-center">
             <div className="flex gap-4 text-sm">
